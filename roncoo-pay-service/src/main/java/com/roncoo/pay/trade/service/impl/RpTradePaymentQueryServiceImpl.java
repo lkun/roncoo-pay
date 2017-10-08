@@ -20,22 +20,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.roncoo.pay.common.core.utils.DateUtils;
-import com.roncoo.pay.trade.utils.MerchantApiUtil;
-import com.roncoo.pay.trade.vo.PaymentOrderQueryParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.roncoo.pay.common.core.enums.PublicEnum;
 import com.roncoo.pay.common.core.page.PageBean;
 import com.roncoo.pay.common.core.page.PageParam;
+import com.roncoo.pay.common.core.utils.DateUtils;
 import com.roncoo.pay.trade.dao.RpTradePaymentOrderDao;
 import com.roncoo.pay.trade.dao.RpTradePaymentRecordDao;
 import com.roncoo.pay.trade.entity.RpTradePaymentOrder;
 import com.roncoo.pay.trade.entity.RpTradePaymentRecord;
 import com.roncoo.pay.trade.enums.TradeStatusEnum;
 import com.roncoo.pay.trade.service.RpTradePaymentQueryService;
+import com.roncoo.pay.trade.utils.MerchantApiUtil;
 import com.roncoo.pay.trade.vo.OrderPayResultVo;
+import com.roncoo.pay.trade.vo.PaymentOrderQueryParam;
 import com.roncoo.pay.user.entity.RpUserPayConfig;
 import com.roncoo.pay.user.exception.UserBizException;
 import com.roncoo.pay.user.service.RpUserPayConfigService;
@@ -230,5 +230,25 @@ public class RpTradePaymentQueryServiceImpl implements RpTradePaymentQueryServic
 		}
 
 		return rpTradePaymentRecordDao.listPage(pageParam,paramMap);
+	}
+	
+	/**
+	 * 获取交易流水报表
+	 * 
+	 * @param merchantNo
+	 * @return
+	 */
+	public List<Map<String, String>> getPaymentReport(String merchantNo){
+		return rpTradePaymentRecordDao.getPaymentReport(merchantNo);
+	}
+	
+	/**
+	 * 获取交易方式报表
+	 * 
+	 * @param merchantNo
+	 * @return
+	 */
+	public List<Map<String, String>> getPayWayReport(String merchantNo){
+		return rpTradePaymentRecordDao.getPayWayReport(merchantNo);
 	}
 }

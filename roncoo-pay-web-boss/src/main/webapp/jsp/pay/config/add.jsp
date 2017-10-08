@@ -59,6 +59,22 @@
 								<input type="radio" name="isAutoSett" value="NO" checked="checked"/>否
 							</dd>
 					</dl>
+					<dl>
+						<dt>安全等级：</dt>
+						<dd>
+							<select name="securityRating" id="securityRating">
+								<c:forEach var="item" items="${SecurityRatingEnum}">
+									<option value="${item.name }">${item.desc }</option>
+								</c:forEach>
+							</select>
+						</dd>
+					</dl>
+					<dl>
+						<dt>IP白名单：</dt>
+						<dd>
+							<textarea  rows="2" cols="30" name="merchantServerIp" id="merchantServerIp" />
+						</dd>
+					</dl>
 				</fieldset>
 				
 				<fieldset id="we_field" style="display: none;">
@@ -93,6 +109,18 @@
 						<tr>
 							<td>收款账号：</td>
 							<td><input type="text" name="ali_sellerId" id="ali_sellerId" maxlength="200" class="required" /></td>
+						</tr>
+						<tr>
+							<td>APPID：</td>
+							<td><input type="text" name="ali_appid" id="ali_appid" maxlength="200" class="required" /></td>
+						</tr>
+						<tr>
+							<td>支付宝私钥：</td>
+							<td><input type="text" name="ali_rsaPrivateKey" id="ali_rsaPrivateKey" maxlength="200" class="required" /></td>
+						</tr>
+						<tr>
+							<td>支付宝公钥：</td>
+							<td><input type="text" name="ali_rsaPublicKey" id="ali_rsaPublicKey" maxlength="200" class="required" /></td>
 						</tr>
 					</table>
 				</fieldset>
@@ -134,6 +162,9 @@
 		$("#ali_partner").attr("class", "");
 		$("#ali_sellerId").attr("class", "");
 		$("#ali_key").attr("class", "");
+		$("#ali_appid").attr("class", "");
+		$("#ali_rsaPrivateKey").attr("class", "");
+		$("#ali_rsaPublicKey").attr("class", "");
 		if(fundIntoType == 'MERCHANT_RECEIVES'){
 			if(productCode != ""){
 				$.ajax({  
@@ -157,6 +188,9 @@
 		              			$("#ali_partner").attr("class", "required");
 		              			$("#ali_sellerId").attr("class", "required");
 		              			$("#ali_key").attr("class", "required");
+		              			$("#ali_appid").attr("class", "required");
+		              			$("#ali_rsaPrivateKey").attr("class", "required");
+		              			$("#ali_rsaPublicKey").attr("class", "required");
 		                      }
 		                   }
 		                }

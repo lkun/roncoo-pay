@@ -1,22 +1,32 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@include file="../../common/taglib/taglib.jsp"%>
 <div class="pageContent">
+<form id="form" method="post" action="${baseURL}/pms/role/assignPermission" class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone);">
 	<div class="pageFormContent" layoutH="60">
-	
-	<input type="hidden"  id="roleId" value="${roleId }" />
+	<input type="hidden" name="navTabId" value="jsgl">
+	<input type="hidden" name="callbackType" value="closeCurrent">
+	<input type="hidden" name="roleId" value="${role.id }" />
+	<input type="hidden" name="selectVal" id="selectVal" value="">
 		
 		<div class="tabs" style="width:500px;float:left;" >
 			<div class="tabsHeader">
 				<div class="tabsHeaderContent">
 					<ul>
-						<li><a href="javascript:;"><span>菜单权限</span></a></li>
+						<li><a href="javascript:;"><span>分配权限</span></a></li>
 					</ul>
 				</div>
 			</div>
 			<div class="tabsContent">
 				<div>
 					<div id="treeDiv" layoutH="100" style="float:left; display:block;overflow:auto; width:489px; border:solid 1px #CCC; line-height:21px; background:#fff">
-					    ${menuActionTree }
+					    <fieldset style="width:99%">
+							<legend>全选<input type="checkbox"  name="selectAll" id="selectAll" ></legend>
+							<c:forEach items="${permissionList}" var="v">
+								<label>
+									<input type="checkbox" class="selectPer" name="selectPer" id="perId${v.id }" value="${v.id }">${v.permissionName }
+								</label>
+							</c:forEach>
+						</fieldset>
 					</div>
 				</div>
 			</div>
@@ -43,13 +53,13 @@
 								</tr>
 							</thead>
 							<tbody>
-							    <s:iterator value="userList" status="st">
+								<c:forEach var="item" items="${operatorList}" varStatus="st">
 									<tr target="sid_user" rel="${id}">
 									    <td>${st.index+1}</td>
-										<td>${loginName }</td>
-										<td>${realName }</td>
+										<td>${item.loginName }</td>
+										<td>${item.realName }</td>
 									</tr>
-								</s:iterator>
+								</c:forEach>
 							</tbody>
 						</table>
 					</div>
@@ -59,56 +69,45 @@
 	</div>
 	<div class="formBar">
 		<ul>
-			<li><div class="buttonActive"><div class="buttonContent"><button type="button"  onclick="saveMenu()" >保存</button></div></div></li>
+			<li><div class="buttonActive"><div class="buttonContent"><button type="button"  onclick="submitForm()" >保存</button></div></div></li>
 			<li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
 		</ul>
 	</div>
+	</form>
 </div>
 <script type="text/javascript">
-	function saveMenu(){
-		var  menuIds = getCheckedMenuIds();
-		var actionIds = getCheckedActionIds();
-		if(menuIds!=""){
-			menuIds=menuIds.substring(0,menuIds.length-1);
+//回显
+$(document).ready(function() {
+	var str = "${permissionIds}";
+	var array = new Array();
+	array = str.split(",");
+	for ( var i = 0; i < array.length; i++) {
+		$("#perId" + array[i]).attr("checked", "checked");
+	}
+	
+	$("#selectAll").click(function(){
+		if($("#selectAll").is(':checked')){
+			$("input[name='selectPer']").attr("checked","checked"); 
+		}else{
+			$("input[name='selectPer']").removeAttr("checked");
 		}
-		$.post("pms_assignPermission.action",
-			{
-				roleId:$("#roleId").val(),
-				menuIds:menuIds,
-				actionIds:actionIds
-			},
-			function(res){
-				if(res.STATE=="SUCCESS"){
-					alertMsg.correct("操作成功,要重新登录才能生效！");
-				}else{
-					alertMsg.error(res.MSG);
-				}
-			},"json");
+	}); 
+});
+
+
+function submitForm() {
+	var str = "";
+	$(":checkbox:checked").each(function() {
+		if ($(this).hasClass('selectPer')){
+			// 加样式判断，避免与其他复选框冲突
+			str += $(this).val() + ",";
+		}
+	});
+	if(str == null || str == ""){
+		alertMsg.error("关联的权限不能为空!");
+		return;
 	}
-	
-	/**获取所有被选中的菜单ID*/
-	function getCheckedMenuIds(){
-		var menuIds = "";
-		$("#treeDiv").find("a[menuid]").each(function(){
-			var $ckbox = $(this).siblings('.ckbox');
-			var b = $ckbox.hasClass('checked') || $ckbox.hasClass('indeterminate');	
-			if (b) {
-				menuIds += $(this).attr("menuid")+",";
-			}
-		});
-		return menuIds;
-	}
-	
-	/**获取所有被选中的权限ID*/
-	function getCheckedActionIds(){
-		var actionIds = "";
-		$("#treeDiv").find("a[actionid]").each(function(){
-			var $ckbox = $(this).siblings('.ckbox');
-			var b = $ckbox.hasClass('checked');	
-			if (b) {
-				actionIds +=$(this).attr("actionid")+",";
-			}
-		});
-		return actionIds;
-	}
+	$("#selectVal").val(str);
+	$("#form").submit();
+}
 </script>
